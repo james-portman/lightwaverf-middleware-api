@@ -1,3 +1,5 @@
+# TODO: keep track of state properly, provide state of all devices via a route
+
 from flask import Flask, render_template, request
 import redis
 from socket import *
