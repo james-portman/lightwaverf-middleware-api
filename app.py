@@ -23,6 +23,14 @@ app = Flask(__name__)
 def route_slash():
     return render_template('slash')
 
+@app.route('/state')
+def route_state():
+    output = {}
+    keys = r.keys('state_*')
+    for key in keys:
+        device = key.replace('state_', '')
+        output[device] = r.get(key)
+    return json.dumps(output)
 
 @app.route('/action')
 def send():
