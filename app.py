@@ -73,24 +73,29 @@ def udp_listen_thread():
     transaction_redis_timeout = 10
     print "listen_thread"
     udp_listen_socket = socket(AF_INET, SOCK_DGRAM)
-    udp_listen_socket.bind(('', 9761))
+    udp_listen_socket.setsockopt(SOL_SOCKET, SO_BROADCAST, 1)
+    udp_listen_socket.bind(("", 9761))
     print "going into listen while true loop"
     # check ^
     while True:
+        print "Got packet"
         m = udp_listen_socket.recvfrom(1024)
         message = m[0]
 
         if message[0] == '*':
             print "GOT JSON PACKET?"
+            print message
             json_data = message[2:]
+            print json_data
             data = json.loads(json_data)
-            r.set('state_R'+str(data['room'])+'D'+str(data['device']), data['fn'])
+            r.set('state_R'+str(data['room'])+'D'+str(data['dev']), data['fn'])
         else:
-            transaction_id = message[:2]
-            state = message[3:]
+            print message
+            transaction_id = message.split(',', 1)[0]
+            state = message.split(',', 1)[1]
             # TODO: don't timeout errors?
             # ERROR example: 112,ERR,6,"Transmit fail"
-            r.setex('transaction_'+transaction_id, transaction_redis_timeout, m[0][-2:])
+            r.setex('transaction_'+transaction_id, transaction_redis_timeout, state)
 
 
 if __name__ == "__main__":
