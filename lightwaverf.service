@@ -1,0 +1,12 @@
+[Unit]
+Description=lightwaverf
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User=homeserver
+ExecStart=/home/homeserver/lightwaverf-middleware-api/venv/bin/python /home/homeserver/lightwaverf-middleware-api/app.py
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
