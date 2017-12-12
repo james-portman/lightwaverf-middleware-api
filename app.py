@@ -65,7 +65,7 @@ def send():
         status = r.get('transaction_'+str(TRANSACTION_ID))
         if status == None:
             retries += 1
-            time.sleep(0.1)
+            time.sleep(0.02)
         else:
             return status
 
@@ -88,7 +88,10 @@ def udp_listen_thread():
             json_data = message[2:]
             print json_data
             data = json.loads(json_data)
-            r.set('state_R'+str(data['room'])+'D'+str(data['dev']), data['fn'])
+            state_key = 'state_R'+str(data['room'])+'D'+str(data['dev'])
+            state = data['fn']
+            print "Setting state: ", state_key, state
+            r.set(state_key, state)
         else:
             print message
             transaction_id = message.split(',', 1)[0]
